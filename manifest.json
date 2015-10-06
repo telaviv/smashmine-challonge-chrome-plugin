@@ -12,7 +12,7 @@
   },
   "content_scripts": [{
     "matches": ["http://challonge.com/*/participants"],
-    "js": ["challonge_sorter.js"]
+    "js": ["jquery-2.1.4.js", "challonge_sorter.js"]
   }],
   "permissions": [
     "declarativeContent",
