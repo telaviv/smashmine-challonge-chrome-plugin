@@ -1906,7 +1906,7 @@ function() {
 		}, c.prototype._allowSortable = function() {
 			return this._collectionHasMultipleModels()
 		}, c.prototype._onSortableUpdate = function(a, b) {
-			return !0
+			return true;
 		}, c.prototype._collectionHasMultipleModels = function() {
 			return this.collection.models.length > 1
 		}, c
@@ -1937,23 +1937,34 @@ function() {
 			"click .participant-reactivate": "_reactivate",
 			"submit .inline-edit": "_editParticipant"
 		}, d.prototype.initialize = function(a) {
-			return this.application = a.application, this.listenTo(this.model, "invalid", this._handleInlineException), this.listenTo(this.model, "sync", this.render)
+			this.application = a.application;
+      this.listenTo(this.model, "invalid", this._handleInlineException);
+      this.listenTo(this.model, "sync", this.render);
 		}, d.prototype.serializeData = function() {
 			return _.extend(this.model.toJSON(), {
 				teams: this.application.tournament.get("teams")
 			})
-		}, d.prototype.onRender = function() {
-			this.model.get("on_waiting_list") && this.$el.addClass("waiting_list"), this.$el.data("id", this.model.get("id")), $(".tip", this.$el).tooltip();
-			if (this.application.tournament.get("teams")) return $(".inline-participant_email", this.$el).typeahead({
-				name: "teams",
-				remote: "/teams.json?term=%QUERY",
-				limit: 10
-			})
-		}, d.prototype.onClose = function() {
-			return $(".tip", this.$el).tooltip("destroy")
-		}, d.prototype._remove = function() {
-			return this.model.get("_removeEffect") && this.$el.effect("blind", 100), d.__super__._remove.apply(this, arguments)
-		}, d.prototype._removeParticipant = function() {
+		}
+    d.prototype.onRender = function() {
+			this.model.get("on_waiting_list") && this.$el.addClass("waiting_list");
+      this.$el.data("id", this.model.get("id"));
+      $(".tip", this.$el).tooltip();
+			if (this.application.tournament.get("teams")) {
+        return $(".inline-participant_email", this.$el).typeahead({
+				  name: "teams",
+				  remote: "/teams.json?term=%QUERY",
+				  limit: 10
+			  });
+      }
+		}
+    d.prototype.onClose = function() {
+			return $(".tip", this.$el).tooltip("destroy");
+		}
+    d.prototype._remove = function() {
+			this.model.get("_removeEffect") && this.$el.effect("blind", 100);
+      return d.__super__._remove.apply(this, arguments);
+		}
+    d.prototype._removeParticipant = function() {
 			var a, b;
 			b = {
 				error: function(a) {
@@ -1976,10 +1987,18 @@ function() {
 			if (confirm(confirmMessage)) {
         return this.model.remove(b);
       }
-		}, d.prototype._toggleInlineForm = function(a) {
-			var b, c;
-			return a.preventDefault(), b = $(".inline-edit", this.$el), c = b.is(":visible") ? "fadeOut" : "fadeIn", this._hideInlineExceptions(), b.parents("ol:first").find(".inline-edit").hide(), b[c]("fast"), b.find(":input:first").focus()
-		}, d.prototype._resendInvitation = function(a) {
+		}
+    d.prototype._toggleInlineForm = function(event) {
+			var hiddenForm, c;
+			event.preventDefault();
+      hiddenForm = $(".inline-edit", this.$el);
+      fadeClass = hiddenForm.is(":visible") ? "fadeOut" : "fadeIn"
+      this._hideInlineExceptions();
+      hiddenForm.parents("ol:first").find(".inline-edit").hide();
+      hiddenForm[fadeClass]("fast");
+      return hiddenForm.find(":input:first").focus();
+		},
+    d.prototype._resendInvitation = function(a) {
 			return a.preventDefault(), confirm("Are you sure you want to resend this invitation?") ? $.when(this.model.resendInvitation()).always(function(a) {
 				return function() {
 					return $(".participant-resend-invite", a.$el).tooltip("hide").attr("data-original-title", "Invitation resent").tooltip("fixTitle").tooltip("show").addClass("icon-ok not-clickable").removeClass("icon-exclamation-sign participant-resend-invite")
@@ -2026,8 +2045,12 @@ function() {
 					}
 				}(this)
 			})
-		}, d.prototype._handleInlineException = function(a) {
-			return a.validationError.length ? ($(".error-message", this.$el).text(a.validationError), $(".error-description", this.$el).slideDown("fast")) : this._hideInlineExceptions()
+		}
+    d.prototype._handleInlineException = function(a) {
+			return a.validationError.length ?
+        ($(".error-message", this.$el).text(a.validationError),
+         $(".error-description", this.$el).slideDown("fast")) :
+        this._hideInlineExceptions()
 		}, d.prototype._hideInlineExceptions = function() {
 			return $(".error-message", this.$el).text(""), $(".error-description", this.$el).slideUp("fast")
 		}, d
@@ -2062,35 +2085,53 @@ function() {
 		function c() {
 			return c.__super__.constructor.apply(this, arguments)
 		}
-		return a(c, b), c.prototype.itemView = root.ParticipantModelView, c.prototype.emptyView = root.ParticipantEmptyView, c.prototype.tagName = "ol", c.prototype.className = "participant-list editable", c.prototype.id = "participants", c.prototype.initialize = function(a) {
-			return this.application = a.application
-		}, c.prototype.itemViewOptions = function(a, b) {
+		a(c, b)
+    c.prototype.itemView = root.ParticipantModelView;
+    c.prototype.emptyView = root.ParticipantEmptyView
+    c.prototype.tagName = "ol"
+    c.prototype.className = "participant-list editable"
+    c.prototype.id = "participants"
+
+    c.prototype.initialize = function(a) {
+			return this.application = a.application;
+		}
+    c.prototype.itemViewOptions = function(a, b) {
 			return {
 				application: this.application,
 				collection: this.collection
 			}
-		}, c.prototype.appendHtml = function(a, b, c) {
+		}
+    c.prototype.appendHtml = function(a, b, c) {
 			a.$el.append(b.el);
 			if (b.model.get("_appendHtmlEffect")) return b.model.unset("_appendHtmlEffect", {
 				silent: !0
 			}), $(b.el).effect("highlight", {
 				color: "#ff8000"
 			}, 500)
-		}, c.prototype.canShuffle = function() {
+		}
+    c.prototype.canShuffle = function() {
 			return this._allowSortable()
-		}, c.prototype.shuffle = function() {
+		}
+    c.prototype.shuffle = function() {
 			return this.collection.shuffleSeeds()
-		}, c.prototype._sortableOptions = function() {
+		}
+    c.prototype._sortableOptions = function() {
 			return {
 				items: ".participant-model"
 			}
-		}, c.prototype._allowSortable = function() {
+		}
+    c.prototype._allowSortable = function() {
 			return c.__super__._allowSortable.apply(this, arguments) && this.application.tournament.get("participants_swappable") && !this.application.tournament.get("group_stages_were_started")
-		}, c.prototype._onSortableUpdate = function(a, ui) {
-			var movingElement, movingId, e, indexInc;
-			return movingElement = $(_.first(ui.item)), indexInc = movingElement.index(".participant-model") + 1, movingId = movingElement.data("id"), e = _.find(this.collection.models, function(a) {
+		}
+    c.prototype._onSortableUpdate = function(_, ui) {
+			var movingElement, movingId, model, indexInc;
+			movingElement = $(_.first(ui.item));
+      indexInc = movingElement.index(".participant-model") + 1
+      movingId = movingElement.data("id")
+      model = _.find(this.collection.models, function(a) {
 				return a.get("id") === movingId
-			}), e.updateSeed(indexInc)
+			}),
+      model.updateSeed(indexInc)
 		}, c
 	}(root.SortableCollectionView)
 }.call(this),

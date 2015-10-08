@@ -1,5 +1,5 @@
 {
-  "name": "Page action by URL",
+  "name": "Norcal Challonge Seeder",
   "version": "1.0",
   "description": "Shows a page action for urls which have the letter 'g' in them.",
   "background": {
@@ -12,8 +12,11 @@
   },
   "content_scripts": [{
     "matches": ["http://challonge.com/*/participants"],
-    "js": ["jquery-2.1.4.js", "challonge_sorter.js"]
+    "run_at": "document_start",
+    "all_frames": true,
+    "js": ["jquery-2.1.4.js", "content-script.js"]
   }],
+  "web_accessible_resources": ["injected-script.js"],
   "permissions": [
     "declarativeContent",
     "http://challonge.com/*/participants"
