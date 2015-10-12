@@ -1978,7 +1978,8 @@ function() {
         return this.model.destroy(_.extend(b, {
 				  success: function(a) {
 					  return function(b, c) {
-						  return a.collection.reset(c), a.collection.trigger("destroy")
+						  a.collection.reset(c);
+              a.collection.trigger("destroy");
 					  }
 				  }(this)
 			  }));
@@ -2327,14 +2328,27 @@ function() {
 	}, b = {}.hasOwnProperty;
 	root.ParticipantManagementApplication = function(backboneApplication) {
 		function constructor(a) {
-			constructor.__super__.constructor.apply(this, arguments), this.participantManagementLayout = new root.ParticipantManagementLayout, this.tournament = a.tournament, this.groupSize = a.groupSize, this.addRegions({
+			constructor.__super__.constructor.apply(this, arguments)
+      this.participantManagementLayout = new root.ParticipantManagementLayout
+      this.tournament = a.tournament
+      this.groupSize = a.groupSize
+      this.addRegions({
 				mainRegion: "#participant-management"
-			}), this.addInitializer(function() {
+			});
+      this.addInitializer(function() {
 				a = {
 					application: this,
 					collection: this.tournament.participantCollection
-				}, this.subView = new root.ParticipantCollectionView(a), this.formView = new root.ParticipantFormView(a), this.controlsView = new root.ParticipantAuxiliaryView(a), this.mainRegion.show(this.participantManagementLayout), this.participantManagementLayout.controlsRegion.show(this.controlsView), this.participantManagementLayout.subViewRegion.show(this.subView);
-				if (!this.tournament.get("participants_locked")) return this.participantManagementLayout.formRegion.show(this.formView)
+				}
+        this.subView = new root.ParticipantCollectionView(a);
+        this.formView = new root.ParticipantFormView(a);
+        this.controlsView = new root.ParticipantAuxiliaryView(a);
+        this.mainRegion.show(this.participantManagementLayout);
+        this.participantManagementLayout.controlsRegion.show(this.controlsView);
+        this.participantManagementLayout.subViewRegion.show(this.subView);
+				if (!this.tournament.get("participants_locked")) {
+          return this.participantManagementLayout.formRegion.show(this.formView)
+        }
 			})
 		}
 		return Mixin(constructor, backboneApplication), constructor
