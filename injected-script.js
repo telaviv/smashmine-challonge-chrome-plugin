@@ -24,18 +24,24 @@
     pma.addInitializer(function() {
       var collection = this.subView.collection;
       collectionSize = collection.size();
-      collection.on("reset add remove", function() {
-        if (collection.size() === collectionSize){
-          console.log('things are the same.');
-        } else if (collection.size() < collectionSize) {
-          console.log('things are smaller.');
-          collectionSize = collection.size();
-        } else if (collection.size() > collectionSize) {
-          console.log('things are larger.');
-          collectionSize = collection.size();
-        }
-      });
+      collection.on("reset add remove",
+        onCollectionChange,
+        {collection: collection}
+      );
     });
+  };
+
+  var onCollectionChange = function() {
+    var collection = this.collection;
+    if (collection.size() === collectionSize){
+      console.log('things are the same.');
+    } else if (collection.size() < collectionSize) {
+      console.log('things are smaller.');
+      collectionSize = collection.size();
+    } else if (collection.size() > collectionSize) {
+      console.log('things are larger.');
+      collectionSize = collection.size();
+    }
   };
 
 })();
