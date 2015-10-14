@@ -69,6 +69,7 @@
     var collection = this.collection;
     if (collection.size() === collectionSize){
       console.log('things are the same.');
+      populateRankingStatistics(collection);
     } else if (collection.size() < collectionSize) {
       console.log('things are smaller.');
       collectionSize = collection.size();
