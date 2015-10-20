@@ -2,6 +2,7 @@
 
   var newPMAConstructor = null;
   var collectionSize = null;
+  var playerRankings = null;
   Object.defineProperty(window, 'ParticipantManagementApplication', {
     get: function() {
       return newPMAConstructor;
@@ -45,14 +46,23 @@
   };
 
   var populateRankingStatistics = function(collection) {
-    sortPlayersRequest(collection).done(function(playerDatum) {
+    return sortPlayersRequest(collection).then(function(playerDatum) {
+      playerRankings = playerDatum;
+
       var names = getNames(collection);
       names.forEach(function(name) {
         var elem = $('.participant-model [title="' + name + '"]');
         var playerData = getPlayerData(name, playerDatum);
-        elem.after('<span style="position:absolute;left:370px">' +
-                   playerData.min.toFixed() + ' &mdash; ' +
-                   playerData.max.toFixed() + '</span>');
+        if (playerData.new) {
+          elem.after('<span style="position:absolute;left:390px;">New Player</span>');
+        }
+        else if (playerData.max - playerData.min < 600) {
+          elem.after('<span style="position:absolute;left:430px; color: #98FF88">' +
+                     playerData.min.toFixed() + '</span>');
+        } else {
+          elem.after('<span style="position:absolute;left:430px; color: #FF2F3E">' +
+                     playerData.min.toFixed() + '</span>');
+        }
       });
     })
   };
@@ -62,6 +72,37 @@
     var names = getNames(collection);
     return $.getJSON('http://smashmine.com/sort', {
       players: JSON.stringify(names)
+    });
+  };
+
+  var sortPlayers = function(index, collection) {
+    if (index === collection.size() - 1) {
+      return;
+    }
+    var highModel = findHighestRankedParticipant(collection.models.splice(index));
+    if (highModel.seed !== index + 1) {
+      return highModel.updateSeed(index + 1).then(function() {
+        sortPlayers(index + 1, collection);
+      });
+    } else {
+      return sortPlayers(index + 1, collection);
+    }
+  };
+
+  var findHighestRankedParticipant = function(participants) {
+    var highestIndex = 0
+    for (var i = 1; i < participants.length; ++i) {
+      if (participantRanking(participants[i]).min >
+          participantRanking(participants[highestIndex]).min) {
+        highestIndex = i;
+      }
+    }
+    return participants[highestIndex];
+  }
+
+  var participantRanking = function(participant) {
+    return playerRankings.find(function(ranking) {
+      return ranking.name === participant.get('name');
     });
   };
 
@@ -76,7 +117,9 @@
     } else if (collection.size() > collectionSize) {
       console.log('things are larger.');
       collectionSize = collection.size();
+      populateRankingStatistics(collection).done(
+        function() {sortPlayers(0, collection);}
+      );
     }
   };
-
 })();
