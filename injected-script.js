@@ -2,7 +2,7 @@
 
   var newPMAConstructor = null;
   var collectionSize = null;
-  var playerRankings = null;
+  var playerRankings = {};
   Object.defineProperty(window, 'ParticipantManagementApplication', {
     get: function() {
       return newPMAConstructor;
@@ -39,34 +39,36 @@
     })
   };
 
-  var getPlayerData = function(name, data) {
-    return data.find(function(elem) {
-      return elem.name === name;
+  var repaintRankings = function(collection) {
+    collection.models.forEach(function(participant) {
+      var playerData = playerRankings[participant.get('name')];
+      var elem = $('.participant-model [title="' + playerData.name + '"]');
+      if (playerData.new) {
+        elem.after('<span style="position:absolute;left:390px;">New Player</span>');
+      }
+      else if (playerData.max - playerData.min < 600) {
+        elem.after('<span style="position:absolute;left:430px; color: #98FF88">' +
+                   playerData.min.toFixed() + '</span>');
+      } else {
+        elem.after('<span style="position:absolute;left:430px; color: #FF2F3E">' +
+                   playerData.min.toFixed() + '</span>');
+      }
     });
   };
 
   var populateRankingStatistics = function(collection) {
     return sortPlayersRequest(collection).then(function(playerDatum) {
-      playerRankings = playerDatum;
-
-      var names = getNames(collection);
-      names.forEach(function(name) {
-        var elem = $('.participant-model [title="' + name + '"]');
-        var playerData = getPlayerData(name, playerDatum);
-        if (playerData.new) {
-          elem.after('<span style="position:absolute;left:390px;">New Player</span>');
-        }
-        else if (playerData.max - playerData.min < 600) {
-          elem.after('<span style="position:absolute;left:430px; color: #98FF88">' +
-                     playerData.min.toFixed() + '</span>');
-        } else {
-          elem.after('<span style="position:absolute;left:430px; color: #FF2F3E">' +
-                     playerData.min.toFixed() + '</span>');
-        }
-      });
-    })
+      updatePlayerRankings(playerDatum);
+    }).then(function() {
+      repaintRankings(collection);
+    });
   };
 
+  var updatePlayerRankings = function(playerDatum) {
+    playerDatum.forEach(function(playerData) {
+      playerRankings[playerData.name] = playerData;
+    });
+  };
 
   var sortPlayersRequest = function(collection) {
     var names = getNames(collection);
@@ -92,25 +94,19 @@
   var findHighestRankedParticipant = function(participants) {
     var highestIndex = 0
     for (var i = 1; i < participants.length; ++i) {
-      if (participantRanking(participants[i]).min >
-          participantRanking(participants[highestIndex]).min) {
+      if (playerRankings[participants[i].get('name')].min >
+          playerRankings[participants[highestIndex].get('name')].min) {
         highestIndex = i;
       }
     }
     return participants[highestIndex];
   }
 
-  var participantRanking = function(participant) {
-    return playerRankings.find(function(ranking) {
-      return ranking.name === participant.get('name');
-    });
-  };
-
   var onCollectionChange = function() {
     var collection = this.collection;
     if (collection.size() === collectionSize){
       console.log('things are the same.');
-      populateRankingStatistics(collection);
+      repaintRankings(collection);
     } else if (collection.size() < collectionSize) {
       console.log('things are smaller.');
       collectionSize = collection.size();
