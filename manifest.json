@@ -1,7 +1,7 @@
 {
-  "name": "Norcal Challonge Seeder",
+  "name": "Norcal Challonge Autoseeder",
   "version": "1.0",
-  "description": "Shows a page action for urls which have the letter 'g' in them.",
+  "description": "Automatically seeds players as you add them.",
   "background": {
     "scripts": ["background.js"],
     "persistent": false
