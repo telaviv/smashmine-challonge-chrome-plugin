@@ -40,17 +40,19 @@
   };
 
   var repaintRankings = function(collection) {
+    $('#participants').css('position', 'relative');
+
     collection.models.forEach(function(participant) {
       var playerData = playerRankings[participant.get('name')];
       var elem = $('.participant-model [title="' + playerData.name + '"]');
       if (playerData.new) {
-        elem.after('<span style="position:absolute;left:390px;">New Player</span>');
+        elem.after('<span style="position:absolute;right:48px;">New Player</span>');
       }
       else if (playerData.max - playerData.min < 600) {
-        elem.after('<span style="position:absolute;left:430px; color: #98FF88">' +
+        elem.after('<span style="position:absolute;right:48px; color: #98FF88">' +
                    playerData.min.toFixed() + '</span>');
       } else {
-        elem.after('<span style="position:absolute;left:430px; color: #FF2F3E">' +
+        elem.after('<span style="position:absolute;right:48px; color: #FF2F3E">' +
                    playerData.min.toFixed() + '</span>');
       }
     });
