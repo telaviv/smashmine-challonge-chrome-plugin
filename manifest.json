@@ -1,13 +1,13 @@
 {
   "name": "Norcal Challonge Autoseeder",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "Automatically seeds players as you add them.",
   "background": {
     "scripts": ["background.js"],
     "persistent": false
   },
   "page_action":  {
-    "default_icon" : "icon-19.png",
+    "default_icon" : {"38": "icon-38.png"},
     "default_title" : "Automatically seeds players as you add them."
   },
   "content_scripts": [{
@@ -22,9 +22,8 @@
     "http://challonge.com/*/participants"
   ],
   "icons": {
-    "19": "icon-19.png",
+    "38": "icon-38.png",
     "48": "icon-48.png",
-    "32": "icon-32.png",
     "128": "icon-128.png"
   },
   "manifest_version": 2
