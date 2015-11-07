@@ -1,6 +1,6 @@
 {
   "name": "Norcal Challonge Autoseeder",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Automatically seeds players as you add them.",
   "background": {
     "scripts": ["background.js"],
@@ -11,7 +11,10 @@
     "default_title" : "Automatically seeds players as you add them."
   },
   "content_scripts": [{
-    "matches": ["http://*.challonge.com/*/participants"],
+    "matches": [
+      "http://*.challonge.com/*/participants",
+      "http://challonge.com/*/participants"
+    ],
     "run_at": "document_start",
     "all_frames": true,
     "js": ["jquery-2.1.4.js", "content-script.js"]
