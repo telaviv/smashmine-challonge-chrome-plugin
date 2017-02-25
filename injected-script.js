@@ -74,7 +74,7 @@
 
   var sortPlayersRequest = function(collection) {
     var names = getNames(collection);
-    return $.getJSON('http://smashmine.com/sort', {
+    return $.getJSON('https://api.smashmine.com/sort', {
       players: JSON.stringify(names)
     });
   };
